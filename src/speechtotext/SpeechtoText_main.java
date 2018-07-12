@@ -13,41 +13,42 @@ import com.ibm.watson.developer_cloud.speech_to_text.v1.model.SpeechRecognitionR
 public class SpeechtoText_main {
 
 	public static void main(String[] args) {
-		SpeechToText service = new SpeechToText();
+	    SpeechToText service = new SpeechToText();
 	    service.setUsernameAndPassword("J16017", "J16017");
 
-	    File audio = new File("audio/output.wav");
-	    RecognizeOptions options = null;
+	    File audio = new File("./audio/output.wav");
+	    RecognizeOptions options =null;
 
-	    MySQL mysql=new MySQL();
-	    mysql.updateImage("a",0.5);
+	    MySQL mysql = new MySQL();
 
-		try {
+
+	    try {
 			options = new RecognizeOptions.Builder()
-			       .model("ja-JP_BroadbandModel")
-					.audio(audio)
-			        .contentType(RecognizeOptions.ContentType.AUDIO_WAV)
-			        .build();
+					.model("ja-JP_BroadbandModel")
+			    .audio(audio)
+			    .contentType(RecognizeOptions.ContentType.AUDIO_WAV)
+			    .build();
 		} catch (FileNotFoundException e) {
 			// TODO 自動生成された catch ブロック
 			e.printStackTrace();
 		}
-	        SpeechRecognitionResults transcript = service.recognize(options).execute();
-	        System.out.println(transcript);
-	        String s=String.valueOf(transcript);
-	        ObjectMapper mapper=new ObjectMapper();
-	        try{
-	        	JsonNode node=mapper.readTree(s);
-	        	for(int i=0;i<node.get("results").size();i++){
-	        String text=node.get("results").get(i).get("alternatives").get(0).get("transcript").asText();
-	        System.out.println("transcript :"+text);
-	        double confidence=node.get("results").get(i).get("alternatives").get(0).get("confidence").asDouble();
-	        System.out.println("confidence :"+confidence);
-	        mysql.updateImage(text, confidence);
-	        	}
-	        }catch(IOException e){
-	        	e.printStackTrace();
-	        }
+	    SpeechRecognitionResults result = service.recognize(options).execute();
+
+	    JsonNode node=null;
+	    ObjectMapper mapper = new ObjectMapper();
+	    try {
+			 node = mapper.readTree(result.toString());
+		} catch (IOException e) {
+			// TODO 自動生成された catch ブロック
+			e.printStackTrace();
+		}
+	    System.out.println(result);
+	    String transcript= node.get("results").get(0).get("alternatives").get(0).get("transcript").toString();
+	    System.out.println(transcript);
+	    Double confidence = node.get("results").get(0).get("alternatives").get(0).get("confidence").asDouble();
+	    System.out.println(confidence);
+	    mysql.updateImage(transcript,confidence);
 
 	}
+
 }

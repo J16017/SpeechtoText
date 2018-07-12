@@ -6,9 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
-import java.util.Map;
-
-public class MySQL {
+import java.util.Map;public class MySQL {
 	String driver;// JDBCドライバの登録
     String server, dbname, url, user, password;// データベースの指定
     Connection con;
